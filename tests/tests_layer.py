@@ -1,11 +1,14 @@
-from unittest.mock import MagicMock
+try:
+    from unittest.mock import MagicMock
+except ImportError:
+    from mock import MagicMock
 
 import numpy as np
 import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
 
-from deepforest.layer import Layer
+from deepforest.layer import Layer, InputLayer
 
 
 def split_x_y(dataframe, target):
@@ -31,9 +34,10 @@ def create_models(n=1):
     models = []
     for i in range(n):
         new_model = MagicMock()
-        new_model.predict.return_value = np.array([[0, 1], [2, 3]])
+        new_model.predict_proba.return_value = np.array([[0, 1], [2, 3]])
         models.append(new_model)
     return models
+
 
 class TestLayer(object):
     def setup(self):
@@ -43,30 +47,30 @@ class TestLayer(object):
     def test_layer_can_be_fitted_on_dataframe(self):
         # Given
         model = MagicMock()
-        layer = Layer(model)
+        layer = InputLayer(model)
 
         # When
         layer.fit(self.X_train, self.y_train)
 
         # Check
         assert isinstance(layer, Layer)
-        
+
     def test_layer_should_throw_exception_error_if_no_model_is_given(self):
         # Check
         with pytest.raises(AssertionError):
             # When
-            layer = Layer()
+            layer = Layer(layer=None)
 
     def test_layer_should_throw_exception_if_bad_model_is_given(self):
         # Check
         with pytest.raises(AssertionError):
             # When
-            layer = Layer(None)
+            layer = InputLayer(None)
 
     def test_layer_fit_should_fit_underlying_models(self):
         # Given
         model = MagicMock()
-        layer = Layer(model)
+        layer = InputLayer(model)
 
         # When
         layer.fit(self.X_train, self.y_train)
@@ -77,10 +81,10 @@ class TestLayer(object):
     def test_layer_predict_should_return_properly_formated_array(self):
         # Given
         models = create_models(n=3)
-        layer = Layer(*models)
+        layer = InputLayer(*models)
 
         # When
         predict = layer.predict(self.X_test)
 
         # Check
-        assert predict.shape == (6, 2)
+        assert predict.shape == (2, 6)

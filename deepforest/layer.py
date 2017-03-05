@@ -18,7 +18,12 @@ def check_model(model):
 
 
 class Layer(object):
-    def __init__(self, *models, **options):
+    """
+    A collection of models that may be chained to other layers in order to
+    build a full deep forest model.
+    """
+
+    def __init__(self, layer, *models):
         self.models = check_models(models)
 
     def fit(self, X, y):
@@ -27,5 +32,14 @@ class Layer(object):
         return self
 
     def predict(self, X):
-        predictions = [model.predict(X) for model in self.models]
-        return np.concatenate(predictions)
+        predictions = [model.predict_proba(X) for model in self.models]
+        return np.concatenate(predictions, axis=1)
+
+
+class InputLayer(Layer):
+    """
+    A layer that is not built upon another layer.
+    """
+
+    def __init__(self, *models):
+        super(InputLayer, self).__init__(None, *models)
