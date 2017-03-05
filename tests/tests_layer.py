@@ -3,7 +3,6 @@ try:
 except ImportError:
     from mock import MagicMock
 
-import numpy as np
 import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
@@ -30,19 +29,20 @@ def load_data(path: str):
     return prepare_data(raw_dataframe)
 
 
-def create_models(n=1):
-    models = []
-    for i in range(n):
-        new_model = MagicMock()
-        new_model.predict_proba.return_value = np.array([[0, 1], [2, 3]])
-        models.append(new_model)
-    return models
-
-
 class TestLayer(object):
     def setup(self):
         self.X_train, self.y_train, \
         self.X_test, self.y_test = load_data("data/train.csv")
+
+    def create_models(self, n, predicted_value):
+        models = []
+        for i in range(n):
+            new_model = MagicMock()
+            new_model.predict_proba.return_value = pd.concat([predicted_value,
+                                                              1 - predicted_value],
+                                                             axis=1)
+            models.append(new_model)
+        return models
 
     def test_layer_can_be_fitted_on_dataframe(self):
         # Given
@@ -80,19 +80,20 @@ class TestLayer(object):
 
     def test_layer_predict_should_return_properly_formated_array(self):
         # Given
-        models = create_models(n=3)
+        models = self.create_models(n=3, predicted_value=self.y_test)
         layer = InputLayer(*models)
 
         # When
         predict = layer.predict(self.X_test)
 
         # Check
-        assert predict.shape == (2, 6)
+        assert predict.shape == (len(self.X_test), 6)
 
     def test_layer_fit_should_call_previous_layers_fit_method(self):
         # Given
-        hidden_models = create_models(3)
+        hidden_models = self.create_models(3, self.y_train)
         input_layer = MagicMock()
+        input_layer.predict.return_value = self.y_train
         hidden_layer = Layer(input_layer, *hidden_models)
 
         # When
@@ -100,3 +101,16 @@ class TestLayer(object):
 
         # Check
         input_layer.fit.assert_called_once_with(self.X_train, self.y_train)
+
+    def test_layer_fit_should_call_previous_layer_predict_method(self):
+        # Given
+        hidden_models = self.create_models(3, predicted_value=self.y_train)
+        input_layer = MagicMock()
+        input_layer.predict.return_value = self.y_train
+        hidden_layer = Layer(input_layer, *hidden_models)
+
+        # When
+        hidden_layer.fit(self.X_train, self.y_train)
+
+        # Check
+        input_layer.predict.assert_called_once_with(self.X_train)

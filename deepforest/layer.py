@@ -1,6 +1,6 @@
-import numpy as np
+import pandas as pd
 
-from deepforest.utils import check_models
+from deepforest.utils import check_models, predictions_to_dataframe
 
 
 class Layer(object):
@@ -15,16 +15,26 @@ class Layer(object):
 
     def fit(self, X, y):
         self.parent_layer.fit(X, y)
-        self._fit_internal_models(X, y)
+        full_X = self._add_parent_predictions(X)
+        return self._fit_internal_models(full_X, y)
+
+    def _add_parent_predictions(self, X: pd.DataFrame) -> pd.DataFrame:
+        predictions = self.parent_layer.predict(X)
+        new_X = pd.concat([X, predictions], axis=1)
+        return new_X
 
     def _fit_internal_models(self, X, y):
         for model in self.models:
             model.fit(X, y)
         return self
 
-    def predict(self, X):
+    def predict(self, X) -> pd.DataFrame:
+        full_X = self._add_parent_predictions(X)
+        return self._make_predictions(full_X)
+
+    def _make_predictions(self, X):
         predictions = [model.predict_proba(X) for model in self.models]
-        return np.concatenate(predictions, axis=1)
+        return predictions_to_dataframe(predictions, X.index, len(self.models))
 
 
 class InputLayer(Layer):
@@ -36,4 +46,7 @@ class InputLayer(Layer):
         super(InputLayer, self).__init__(None, *models)
 
     def fit(self, X, y):
-        self._fit_internal_models(X, y)
+        return self._fit_internal_models(X, y)
+
+    def predict(self, X):
+        return self._make_predictions(X)
