@@ -88,3 +88,15 @@ class TestLayer(object):
 
         # Check
         assert predict.shape == (2, 6)
+
+    def test_layer_fit_should_call_previous_layers_fit_method(self):
+        # Given
+        hidden_models = create_models(3)
+        input_layer = MagicMock()
+        hidden_layer = Layer(input_layer, *hidden_models)
+
+        # When
+        hidden_layer.fit(self.X_train, self.y_train)
+
+        # Check
+        input_layer.fit.assert_called_once_with(self.X_train, self.y_train)

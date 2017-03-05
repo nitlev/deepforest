@@ -1,20 +1,6 @@
 import numpy as np
 
-
-def check_models(models):
-    at_least_one_model = False
-    for model in models:
-        check_model(model)
-        at_least_one_model = True
-    assert at_least_one_model, "You must pass at least one model to a Layer"
-    return models
-
-
-def check_model(model):
-    has_fit_method = hasattr(model, "fit")
-    has_predict_method = hasattr(model, "predict")
-    assert has_fit_method and has_predict_method, \
-        "models should have fit and predict methods"
+from deepforest.utils import check_models
 
 
 class Layer(object):
@@ -24,9 +10,14 @@ class Layer(object):
     """
 
     def __init__(self, layer, *models):
+        self.parent_layer = layer
         self.models = check_models(models)
 
     def fit(self, X, y):
+        self.parent_layer.fit(X, y)
+        self._fit_internal_models(X, y)
+
+    def _fit_internal_models(self, X, y):
         for model in self.models:
             model.fit(X, y)
         return self
@@ -43,3 +34,6 @@ class InputLayer(Layer):
 
     def __init__(self, *models):
         super(InputLayer, self).__init__(None, *models)
+
+    def fit(self, X, y):
+        self._fit_internal_models(X, y)
