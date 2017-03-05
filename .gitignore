@@ -93,3 +93,6 @@ ENV/
 
 # CSV files
 *.csv
+
+# IDEA env
+.idea/
