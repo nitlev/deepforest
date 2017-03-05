@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock
 
+import numpy as np
 import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
@@ -26,6 +27,14 @@ def load_data(path: str):
     return prepare_data(raw_dataframe)
 
 
+def create_models(n=1):
+    models = []
+    for i in range(n):
+        new_model = MagicMock()
+        new_model.predict.return_value = np.array([[0, 1], [2, 3]])
+        models.append(new_model)
+    return models
+
 class TestLayer(object):
     def setup(self):
         self.X_train, self.y_train, \
@@ -34,7 +43,7 @@ class TestLayer(object):
     def test_layer_can_be_fitted_on_dataframe(self):
         # Given
         model = MagicMock()
-        layer = Layer(models=[model])
+        layer = Layer(model)
 
         # When
         layer.fit(self.X_train, self.y_train)
@@ -46,10 +55,32 @@ class TestLayer(object):
         # Check
         with pytest.raises(AssertionError):
             # When
-            layer = Layer(models=[])
+            layer = Layer()
 
     def test_layer_should_throw_exception_if_bad_model_is_given(self):
         # Check
         with pytest.raises(AssertionError):
             # When
-            layer = Layer(models=[None])
+            layer = Layer(None)
+
+    def test_layer_fit_should_fit_underlying_models(self):
+        # Given
+        model = MagicMock()
+        layer = Layer(model)
+
+        # When
+        layer.fit(self.X_train, self.y_train)
+
+        # Check
+        model.fit.assert_called_once_with(self.X_train, self.y_train)
+
+    def test_layer_predict_should_return_properly_formated_array(self):
+        # Given
+        models = create_models(n=3)
+        layer = Layer(*models)
+
+        # When
+        predict = layer.predict(self.X_test)
+
+        # Check
+        assert predict.shape == (6, 2)

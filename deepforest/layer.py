@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def check_models(models):
     at_least_one_model = False
     for model in models:
@@ -15,8 +18,14 @@ def check_model(model):
 
 
 class Layer(object):
-    def __init__(self, models):
+    def __init__(self, *models, **options):
         self.models = check_models(models)
 
     def fit(self, X, y):
+        for model in self.models:
+            model.fit(X, y)
         return self
+
+    def predict(self, X):
+        predictions = [model.predict(X) for model in self.models]
+        return np.concatenate(predictions)
