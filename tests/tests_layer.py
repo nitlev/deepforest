@@ -1,4 +1,7 @@
+from unittest.mock import MagicMock
+
 import pandas as pd
+import pytest
 from sklearn.model_selection import train_test_split
 
 from deepforest.layer import Layer
@@ -30,10 +33,23 @@ class TestLayer(object):
 
     def test_layer_can_be_fitted_on_dataframe(self):
         # Given
-        layer = Layer()
+        model = MagicMock()
+        layer = Layer(models=[model])
 
         # When
         layer.fit(self.X_train, self.y_train)
 
         # Check
         assert isinstance(layer, Layer)
+        
+    def test_layer_should_throw_exception_error_if_no_model_is_given(self):
+        # Check
+        with pytest.raises(AssertionError):
+            # When
+            layer = Layer(models=[])
+
+    def test_layer_should_throw_exception_if_bad_model_is_given(self):
+        # Check
+        with pytest.raises(AssertionError):
+            # When
+            layer = Layer(models=[None])
