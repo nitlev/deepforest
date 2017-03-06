@@ -7,8 +7,11 @@ python:
   - "3.5"
   - "3.6"
 
+before-install:
+  - pip install --upgrade pip setuptools wheel
+
 install:
-  - pip install -r requirements.txt
+  - pip install --only-binary=numpy,scipy -r requirements.txt
   - python setup.py install
 
 before_script: wget https://www.kaggle.com/c/titanic/download/train.csv -P data/
