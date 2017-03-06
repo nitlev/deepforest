@@ -25,7 +25,7 @@ def prepare_data(dataframe: pd.DataFrame):
 
 
 def load_data(path: str):
-    raw_dataframe = pd.read_csv(path)
+    raw_dataframe = pd.read_csv(path, sep=',')
     return prepare_data(raw_dataframe)
 
 
