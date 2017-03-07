@@ -3,9 +3,9 @@ try:
 except ImportError:
     from mock import MagicMock
 
+import numpy as np
 import pandas as pd
 import pytest
-from sklearn.model_selection import train_test_split
 
 from deepforest.layer import Layer, InputLayer
 
@@ -14,19 +14,18 @@ def split_x_y(dataframe, target):
     return dataframe.drop(target, axis=1), dataframe[target]
 
 
-def prepare_data(dataframe: pd.DataFrame):
-    clean_data = dataframe.drop(["Cabin", "Name", "PassengerId", "Ticket"],
-                                axis=1)
-    clean_data = pd.get_dummies(clean_data).fillna(-1)
-    train, test = train_test_split(clean_data)
-    X_train, y_train = split_x_y(train, "Survived")
-    X_test, y_test = split_x_y(test, "Survived")
-    return X_train, y_train, X_test, y_test
+def prepare_x(shape):
+    data = np.random.rand(*shape)
+    return pd.DataFrame(data)
+
+
+def prepare_y(shape):
+    data = np.random.randint(0, 2, shape)
+    return pd.Series(data)
 
 
 def load_data(path: str):
-    raw_dataframe = pd.read_csv(path, sep=',')
-    return prepare_data(raw_dataframe)
+    return prepare_x((10, 10)), prepare_y(10), prepare_x((5, 5)), prepare_y(5)
 
 
 class TestLayer(object):
