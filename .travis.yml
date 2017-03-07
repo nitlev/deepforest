@@ -16,4 +16,4 @@ install:
 
 before_script: wget https://www.kaggle.com/c/titanic/download/train.csv -P data/
 
-script: pytest
+script: py.test
