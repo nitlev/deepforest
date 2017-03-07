@@ -1,17 +1,9 @@
-try:
-    from unittest.mock import MagicMock
-except ImportError:
-    from mock import MagicMock
-
 import numpy as np
 import pandas as pd
 import pytest
+from mock import MagicMock
 
 from deepforest.layer import Layer, InputLayer
-
-
-def split_x_y(dataframe, target):
-    return dataframe.drop(target, axis=1), dataframe[target]
 
 
 def prepare_x(shape):
