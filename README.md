@@ -14,7 +14,7 @@ A simple implementation in python of the method proposed by Zhi-Hua Zhou and Ji
  
  The recommended way to proceed for the installation is through conda environments.
  Using conda you need to type :
- ```python
+ ```bash
 conda create -n deepforest python=3
 source activate deepforest
 conda install --file requirements.txt
