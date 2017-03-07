@@ -24,14 +24,14 @@ def prepare_y(shape):
     return pd.Series(data)
 
 
-def load_data(path: str):
+def load_data():
     return prepare_x((10, 10)), prepare_y(10), prepare_x((5, 5)), prepare_y(5)
 
 
 class TestLayer(object):
     def setup(self):
         self.X_train, self.y_train, \
-        self.X_test, self.y_test = load_data("data/train.csv")
+        self.X_test, self.y_test = load_data()
 
     def create_models(self, n, predicted_value):
         models = []

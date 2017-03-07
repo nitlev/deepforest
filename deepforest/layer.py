@@ -18,7 +18,7 @@ class Layer(object):
         full_X = self._add_parent_predictions(X)
         return self._fit_internal_models(full_X, y)
 
-    def _add_parent_predictions(self, X: pd.DataFrame) -> pd.DataFrame:
+    def _add_parent_predictions(self, X):
         predictions = self.parent_layer.predict(X)
         new_X = pd.concat([X, predictions], axis=1)
         return new_X
@@ -28,7 +28,7 @@ class Layer(object):
             model.fit(X, y)
         return self
 
-    def predict(self, X) -> pd.DataFrame:
+    def predict(self, X):
         full_X = self._add_parent_predictions(X)
         return self._make_predictions(full_X)
 
