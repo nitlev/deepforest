@@ -40,6 +40,6 @@ setup(
     long_description=re.compile('^.. start-badges.*^.. end-badges',
                                 re.M | re.S).sub('', read('README.md')),
     packages=find_packages(),
-    install_requires=read('requirements.txt').split("\n"),
-    extras_require={},
+    include_package_data=True,
+    zip_safe=True,
 )

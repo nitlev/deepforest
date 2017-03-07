@@ -8,3 +8,15 @@ A simple implementation in python of the method proposed by Zhi-Hua Zhou and Ji
  The implementation is based on the great work of the Scikit-learn library. The 
  API is built upon the scikit way of doing data science, by defining object with 
  fit and predict methods. Some example will be provided soon...
+ 
+ 
+ ## Installation
+ 
+ The recommended way to proceed for the installation is through conda environments.
+ Using conda you need to type :
+ ```python
+conda create -n deepforest python=3
+source activate deepforest
+conda install --file requirements.txt
+python setup.py install
+```
