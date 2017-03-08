@@ -10,7 +10,8 @@ You can check their article [here](https://arxiv.org/pdf/1702.08835.pdf)
  
 The implementation is based on the great work of the Scikit-learn library. The
 API is built upon the scikit way of doing data science, by defining object with
-fit and predict methods. Some example will be provided soon...
+fit and predict methods. Some example will be provided soon! In the meantime, 
+you may start by checking up the notebooks.
  
  
 ## Installation
