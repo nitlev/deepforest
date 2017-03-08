@@ -27,7 +27,7 @@ before_install:
 install:
   - conda create -q -n deepforest python=$TRAVIS_PYTHON_VERSION
   - source activate deepforest
-  - conda install --file requirements.txt -q
+  - conda install --file requirements.txt --file test-requirements.txt -q
   - python setup.py install
 
 script: py.test
