@@ -1,4 +1,5 @@
 # DeepForest
+[![Build Status](https://travis-ci.org/nitlev/deepforest.svg?branch=master)](https://travis-ci.org/nitlev/deepforest)
 
 A simple implementation in python of the method proposed by Zhi-Hua Zhou and Ji
  Feng in their paper "Deep Forest: Towards An Alternative to Deep Neural 
