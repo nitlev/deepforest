@@ -28,6 +28,10 @@ install:
   - conda create -q -n deepforest python=$TRAVIS_PYTHON_VERSION
   - source activate deepforest
   - conda install --file requirements.txt --file test-requirements.txt -q
+  - pip install python-coveralls
   - python setup.py install
 
-script: py.test
+script: coverage run --source=deepforest setup.py test
+
+after_success:
+  - coveralls

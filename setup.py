@@ -27,19 +27,21 @@ setup(
 
         # Indicate who your project is intended for
         'Intended Audience :: Data scientists',
-        'Topic :: Deep Learning :: Q learning',
+        'Topic :: Deep Learning :: Deep Forests',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python 2.7 :: Python 3.3+',
     ],
     keywords='random forest :: deep learning',
     version='0.1.0',
-    license='BSD',
+    license='MIT',
     description='This is a simple implementation of the deep forest method',
     long_description=re.compile('^.. start-badges.*^.. end-badges',
                                 re.M | re.S).sub('', read('README.md')),
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest']
 )
