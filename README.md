@@ -1,5 +1,6 @@
 # DeepForest
 [![Build Status](https://travis-ci.org/nitlev/deepforest.svg?branch=master)](https://travis-ci.org/nitlev/deepforest)
+[![Coverage Status](https://coveralls.io/repos/github/nitlev/deepforest/badge.svg?branch=dev)](https://coveralls.io/github/nitlev/deepforest?branch=dev)
 
 
 ## You'll find here
