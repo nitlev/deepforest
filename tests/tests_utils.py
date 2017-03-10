@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
+import pytest
 
-from deepforest.utils import predictions_to_dataframe
+from deepforest.utils import predictions_to_dataframe, check_model
 
 
 class TestUtils(object):
@@ -17,3 +18,29 @@ class TestUtils(object):
         # Check
         assert isinstance(dataframe, pd.DataFrame)
         assert dataframe.shape == (2, 12)
+
+    def test_check_model_should_raise_error_if_object_has_no_fit_method(self):
+        # Given
+        class StubPredict:
+            def predict(self):
+                pass
+
+        stubPredict = StubPredict()
+
+        # Check
+        with pytest.raises(AssertionError):
+            # When
+            check_model(stubPredict)
+
+    def test_check_model_should_raise_error_if_object_has_no_predict_method(self):
+        # Given
+        class StubFit:
+            def fit(self):
+                pass
+
+        stubFit = StubFit()
+
+        # Check
+        with pytest.raises(AssertionError):
+            # When
+            check_model(stubFit)

@@ -29,6 +29,7 @@ class TestLayer(object):
         models = []
         for i in range(n):
             new_model = MagicMock()
+            new_model.predict.return_value = predicted_value
             new_model.predict_proba.return_value = pd.concat([predicted_value,
                                                               1 - predicted_value],
                                                              axis=1)
@@ -69,10 +70,22 @@ class TestLayer(object):
         # Check
         model.fit.assert_called_once_with(self.X_train, self.y_train)
 
-    def test_layer_predict_should_return_properly_formated_array(self):
+    def test_input_layer_predict_should_return_properly_formated_array(self):
         # Given
         models = self.create_models(n=3, predicted_value=self.y_test)
         layer = InputLayer(*models)
+
+        # When
+        predict = layer.predict(self.X_test)
+
+        # Check
+        assert predict.shape == (len(self.X_test), 6)
+
+    def test_layer_predict_should_return_properly_formated_array(self):
+        # Given
+        models = self.create_models(n=3, predicted_value=self.y_test)
+        input_layer = self.create_models(n=1, predicted_value=self.y_test)[0]
+        layer = Layer(input_layer, *models)
 
         # When
         predict = layer.predict(self.X_test)
