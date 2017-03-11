@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from mock import MagicMock
 
 
@@ -21,6 +20,7 @@ def create_models(n, predicted_value):
         new_model = MagicMock()
         new_model.predict.return_value = predicted_value
         new_model.predict_proba.return_value = np.stack([predicted_value,
-                                                         1 - predicted_value]).T
+                                                         1 - predicted_value],
+                                                        axis=1)
         models.append(new_model)
     return models
