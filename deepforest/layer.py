@@ -1,6 +1,7 @@
-import pandas as pd
+import numpy as np
 
-from deepforest.utils import check_models, predictions_to_dataframe
+from deepforest.models import Models
+from deepforest.utils import check_models
 
 
 class Layer(object):
@@ -11,42 +12,39 @@ class Layer(object):
 
     def __init__(self, layer, *models):
         self.parent_layer = layer
-        self.models = check_models(models)
+        self.models = Models(check_models(models))
 
     def fit(self, X, y):
         self.parent_layer.fit(X, y)
         full_X = self._add_parent_predictions(X)
-        return self._fit_internal_models(full_X, y)
+        self.models.fit(full_X, y)
+        return self
 
     def _add_parent_predictions(self, X):
         predictions = self.parent_layer.predict(X)
-        new_X = pd.concat([X, predictions], axis=1)
+        if len(predictions.shape) == 1:
+            new_X = np.concatenate([X, np.reshape(predictions, (-1, 1))],
+                                   axis=1)
+        else:
+            new_X = np.concatenate([X, predictions], axis=1)
         return new_X
-
-    def _fit_internal_models(self, X, y):
-        for model in self.models:
-            model.fit(X, y)
-        return self
 
     def predict(self, X):
         full_X = self._add_parent_predictions(X)
-        return self._make_predictions(full_X)
-
-    def _make_predictions(self, X):
-        predictions = [model.predict_proba(X) for model in self.models]
-        return predictions_to_dataframe(predictions, X.index, len(self.models))
+        return self.models.predict_proba(full_X)
 
 
-class InputLayer(Layer):
+class InputLayer(object):
     """
     A layer that is not built upon another layer.
     """
 
     def __init__(self, *models):
-        super(InputLayer, self).__init__(None, *models)
+        self.models = Models(check_models(models))
 
     def fit(self, X, y):
-        return self._fit_internal_models(X, y)
+        self.models.fit(X, y)
+        return self
 
     def predict(self, X):
-        return self._make_predictions(X)
+        return self.models.predict(X)

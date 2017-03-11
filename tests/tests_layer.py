@@ -1,23 +1,9 @@
-import numpy as np
-import pandas as pd
-import pytest
+from __future__ import absolute_import
 from mock import MagicMock
+import pytest
 
 from deepforest.layer import Layer, InputLayer
-
-
-def prepare_x(shape):
-    data = np.random.rand(*shape)
-    return pd.DataFrame(data)
-
-
-def prepare_y(shape):
-    data = np.random.randint(0, 2, shape)
-    return pd.Series(data)
-
-
-def load_data():
-    return prepare_x((10, 10)), prepare_y(10), prepare_x((5, 5)), prepare_y(5)
+from .utils import load_data, create_models
 
 
 class TestLayer(object):
@@ -25,27 +11,16 @@ class TestLayer(object):
         self.X_train, self.y_train, \
         self.X_test, self.y_test = load_data()
 
-    def create_models(self, n, predicted_value):
-        models = []
-        for i in range(n):
-            new_model = MagicMock()
-            new_model.predict.return_value = predicted_value
-            new_model.predict_proba.return_value = pd.concat([predicted_value,
-                                                              1 - predicted_value],
-                                                             axis=1)
-            models.append(new_model)
-        return models
-
     def test_layer_can_be_fitted_on_dataframe(self):
         # Given
         model = MagicMock()
         layer = InputLayer(model)
 
         # When
-        layer.fit(self.X_train, self.y_train)
+        new_layer = layer.fit(self.X_train, self.y_train)
 
         # Check
-        assert isinstance(layer, Layer)
+        assert isinstance(new_layer, InputLayer)
 
     def test_layer_should_throw_exception_error_if_no_model_is_given(self):
         # Check
@@ -72,19 +47,19 @@ class TestLayer(object):
 
     def test_input_layer_predict_should_return_properly_formated_array(self):
         # Given
-        models = self.create_models(n=3, predicted_value=self.y_test)
+        models = create_models(n=3, predicted_value=self.y_test)
         layer = InputLayer(*models)
 
         # When
         predict = layer.predict(self.X_test)
 
         # Check
-        assert predict.shape == (len(self.X_test), 6)
+        assert predict.shape == (len(self.X_test), 3)
 
     def test_layer_predict_should_return_properly_formated_array(self):
         # Given
-        models = self.create_models(n=3, predicted_value=self.y_test)
-        input_layer = self.create_models(n=1, predicted_value=self.y_test)[0]
+        models = create_models(n=3, predicted_value=self.y_test)
+        input_layer = create_models(n=1, predicted_value=self.y_test)[0]
         layer = Layer(input_layer, *models)
 
         # When
@@ -95,7 +70,7 @@ class TestLayer(object):
 
     def test_layer_fit_should_call_previous_layers_fit_method(self):
         # Given
-        hidden_models = self.create_models(3, self.y_train)
+        hidden_models = create_models(3, self.y_train)
         input_layer = MagicMock()
         input_layer.predict.return_value = self.y_train
         hidden_layer = Layer(input_layer, *hidden_models)
@@ -108,7 +83,7 @@ class TestLayer(object):
 
     def test_layer_fit_should_call_previous_layer_predict_method(self):
         # Given
-        hidden_models = self.create_models(3, predicted_value=self.y_train)
+        hidden_models = create_models(3, predicted_value=self.y_train)
         input_layer = MagicMock()
         input_layer.predict.return_value = self.y_train
         hidden_layer = Layer(input_layer, *hidden_models)
