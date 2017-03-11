@@ -6,8 +6,7 @@
 ## You'll find here
 a simple implementation in python of the method proposed by Zhi-Hua Zhou and Ji
 Feng in their paper "Deep Forest: Towards An Alternative to Deep Neural Networks".
-You can check their article [here](https://arxiv.org/pdf/1702.08835.pdf)
-<br><br>
+You can check their article [here](https://arxiv.org/pdf/1702.08835.pdf)<br>
  
 The implementation is based on the great work of the Scikit-learn library. The
 API is built upon the scikit way of doing data science, by defining object with
@@ -24,4 +23,18 @@ conda create -n deepforest python=3
 source activate deepforest
 conda install --file requirements.txt
 python setup.py install
+```
+
+# Testing
+
+The library is currently tested on python 2.7, 3.4, 3.5 and 3.6.
+
+If you wish to run the tests yourself, you may clone this repo and run
+```bash
+cd DeepForest
+conda create -q -n deepforest_test python=3
+source activate deepforest_test
+conda install --file requirements.txt --file test-requirements.txt -q
+python setup.py install
+python setup.py test
 ```
