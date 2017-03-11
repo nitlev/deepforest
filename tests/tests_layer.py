@@ -1,6 +1,8 @@
 from __future__ import absolute_import
-from mock import MagicMock
+
+import numpy as np
 import pytest
+from mock import MagicMock
 
 from deepforest.layer import Layer, InputLayer
 from .utils import load_data, create_models
@@ -93,3 +95,20 @@ class TestLayer(object):
 
         # Check
         input_layer.predict.assert_called_once_with(self.X_train)
+
+    def test_layer_predict_should_call_predict_on_augmented_dataset(self):
+        # Given
+        hidden_models = create_models(3, predicted_value=self.y_train)
+        input_layer = MagicMock()
+        predictions = np.stack([self.y_train for _ in range(3)], axis=-1)
+        input_layer.predict.return_value = predictions
+        hidden_layer = Layer(input_layer, *hidden_models)
+
+        # When
+        hidden_layer.fit(self.X_train, self.y_train)
+
+        # Check
+        for model in hidden_models:
+            args, kwargs = model.fit.call_args
+            assert args[0].shape == (self.X_train.shape[0],
+                                     self.X_train.shape[1] + 3)
