@@ -40,6 +40,7 @@ setup(
     long_description=re.compile('^.. start-badges.*^.. end-badges',
                                 re.M | re.S).sub('', read('README.md')),
     packages=find_packages(),
+    package_dir={"deepforest": "deepforest"},
     include_package_data=True,
     zip_safe=True,
     setup_requires=['pytest-runner'],
