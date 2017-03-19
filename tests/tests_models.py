@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
-from deepforest.models import Models
+from mock import MagicMock
+
+from deepforest.models import Models, CrossValidatedModel
 from .utils import create_models, load_data
 
 
@@ -53,7 +55,8 @@ class TestModels(object):
         # Check
         assert prediction.shape == (len(self.y_test), nb_models)
 
-    def test_Models_predict_proba_method_should_call_predict_proba_on_all_models(self):
+    def test_Models_predict_proba_method_should_call_predict_proba_on_all_models(
+            self):
         # Given
         models = Models(create_models(n=3,
                                       predicted_value=self.y_test))
@@ -76,3 +79,47 @@ class TestModels(object):
 
         # Check
         assert prediction.shape == (len(self.y_test), 2 * nb_models)
+
+
+class TestCrossValidatedModel(object):
+    def setup(self):
+        self.X_train, self.y_train, \
+        self.X_test, self.y_test = load_data()
+
+    def test_cvmodel_fit_should_fit_underlying_mode(self):
+        # Given
+        model_mock = MagicMock()
+        cvmodel = CrossValidatedModel(model_mock)
+
+        # When
+        cvmodel.fit(self.X_train, self.y_train)
+
+        # Check
+        for model in cvmodel.models:
+            model.fit.assert_called()
+
+    def test_csvmdoel_predict_proba_should_return_properly_formatted_array(self):
+        # Given
+        n_splits = 3
+        model_mock = MagicMock()
+        cvmodel = CrossValidatedModel(model_mock, n_splits=n_splits)
+        cvmodel.models = create_models(n_splits, self.y_test)
+
+        # When
+        prediction = cvmodel.predict_proba(self.X_test)
+
+        # Check
+        assert prediction.shape == (len(self.y_test), 2)
+
+    def test_csvmdoel_predict_should_return_properly_formatted_array(self):
+        # Given
+        n_splits = 3
+        model_mock = MagicMock()
+        cvmodel = CrossValidatedModel(model_mock, n_splits=n_splits)
+        cvmodel.models = create_models(n_splits, self.y_test)
+
+        # When
+        prediction = cvmodel.predict(self.X_test)
+
+        # Check
+        assert prediction.shape == (len(self.y_test),)

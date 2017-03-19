@@ -15,12 +15,19 @@ def load_data():
 
 
 def create_models(n, predicted_value):
+    def predict(X):
+        return predicted_value[:len(X)]
+
+    def predict_proba(X):
+        return np.stack([predict(X),
+                         1 - predict(X)],
+                        axis=1)
+
     models = []
     for i in range(n):
         new_model = MagicMock()
-        new_model.predict.return_value = predicted_value
-        new_model.predict_proba.return_value = np.stack([predicted_value,
-                                                         1 - predicted_value],
-                                                        axis=1)
+        new_model.classes_ = [0, 1]
+        new_model.predict.side_effect = predict
+        new_model.predict_proba.side_effect = predict_proba
         models.append(new_model)
     return models
