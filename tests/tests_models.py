@@ -95,15 +95,26 @@ class TestCrossValidatedModel(object):
         cvmodel.fit(self.X_train, self.y_train)
 
         # Check
-        for model in cvmodel.models:
+        for model in cvmodel._models:
             model.fit.assert_called()
+
+    def test_cvmodel_fit_should_return_crossvalmodel(self):
+        # Given
+        model_mock = MagicMock()
+        cvmodel = CrossValidatedModel(model_mock)
+
+        # When
+        new_model = cvmodel.fit(self.X_train, self.y_train)
+
+        # Check
+        assert isinstance(new_model, CrossValidatedModel)
 
     def test_csvmdoel_predict_proba_should_return_properly_formatted_array(self):
         # Given
         n_splits = 3
         model_mock = MagicMock()
         cvmodel = CrossValidatedModel(model_mock, n_splits=n_splits)
-        cvmodel.models = create_models(n_splits, self.y_test)
+        cvmodel._models = create_models(n_splits, self.y_test)
 
         # When
         prediction = cvmodel.predict_proba(self.X_test)
@@ -116,7 +127,7 @@ class TestCrossValidatedModel(object):
         n_splits = 3
         model_mock = MagicMock()
         cvmodel = CrossValidatedModel(model_mock, n_splits=n_splits)
-        cvmodel.models = create_models(n_splits, self.y_test)
+        cvmodel._models = create_models(n_splits, self.y_test)
 
         # When
         prediction = cvmodel.predict(self.X_test)
