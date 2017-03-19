@@ -25,7 +25,7 @@ conda install --file requirements.txt
 python setup.py install
 ```
 
-# Testing
+## Testing
 
 The library is currently tested on python 2.7, 3.4, 3.5 and 3.6.
 
