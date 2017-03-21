@@ -1,12 +1,5 @@
 import numpy as np
 from mock import MagicMock
-from sklearn.ensemble import RandomForestClassifier
-
-
-class TestWithData(object):
-    def setup(self):
-        self.X_train, self.y_train, \
-        self.X_test, self.y_test = load_data()
 
 
 def prepare_x(shape):
@@ -18,7 +11,8 @@ def prepare_y(shape):
 
 
 def load_data():
-    return prepare_x((10, 10)), prepare_y(10), prepare_x((5, 5)), prepare_y(5)
+    return prepare_x((100, 100)), prepare_y(100),\
+           prepare_x((50, 50)), prepare_y(50)
 
 
 def create_models(n, predicted_value):
@@ -44,3 +38,9 @@ def create_models(n, predicted_value):
 def models_generator(predicted_value):
     while True:
         yield create_models(3, predicted_value)
+
+
+class TestWithData(object):
+    def setup(self):
+        self.X_train, self.y_train, \
+        self.X_test, self.y_test = load_data()
