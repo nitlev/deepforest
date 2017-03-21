@@ -8,7 +8,12 @@ def check_models(models):
 
 
 def check_model(model):
-    has_fit_method = hasattr(model, "fit")
-    has_predict_method = hasattr(model, "predict")
-    assert has_fit_method and has_predict_method, \
-        "models should have fit and predict methods"
+    assert_has_method(model, "fit")
+    assert_has_method(model, "predict_proba")
+    assert_has_method(model, "predict_proba")
+
+
+def assert_has_method(model, method):
+    assert hasattr(model, method), \
+        "models should have {} method, type {} doesn't".format(method,
+                                                               type(model))

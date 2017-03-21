@@ -43,34 +43,34 @@ class TestLayer(TestWithData):
         # Check
         model.fit.assert_called_once_with(self.X_train, self.y_train)
 
-    def test_input_layer_predict_should_return_properly_formated_array(self):
+    def test_input_layer_predict_proba_should_return_properly_formated_array(self):
         # Given
         models = create_models(n=3, predicted_value=self.y_test)
         layer = InputLayer(*models)
 
         # When
-        predict = layer.predict(self.X_test)
+        predict = layer.predict_proba(self.X_test)
 
         # Check
-        assert predict.shape == (len(self.X_test), 3)
+        assert predict.shape == (len(self.X_test), 2, 3)
 
-    def test_layer_predict_should_return_properly_formated_array(self):
+    def test_layer_predict_proba_should_return_properly_formated_array(self):
         # Given
         models = create_models(n=3, predicted_value=self.y_test)
         input_layer = create_models(n=1, predicted_value=self.y_test)[0]
         layer = Layer(input_layer, *models)
 
         # When
-        predict = layer.predict(self.X_test)
+        predict = layer.predict_proba(self.X_test)
 
         # Check
-        assert predict.shape == (len(self.X_test), 6)
+        assert predict.shape == (len(self.X_test), 2, 3)
 
     def test_layer_fit_should_call_previous_layers_fit_method(self):
         # Given
         hidden_models = create_models(3, self.y_train)
         input_layer = MagicMock()
-        input_layer.predict.return_value = self.y_train
+        input_layer.predict_proba.return_value = self.y_train
         hidden_layer = Layer(input_layer, *hidden_models)
 
         # When
@@ -83,21 +83,21 @@ class TestLayer(TestWithData):
         # Given
         hidden_models = create_models(3, predicted_value=self.y_train)
         input_layer = MagicMock()
-        input_layer.predict.return_value = self.y_train
+        input_layer.predict_proba.return_value = self.y_train
         hidden_layer = Layer(input_layer, *hidden_models)
 
         # When
         hidden_layer.fit(self.X_train, self.y_train)
 
         # Check
-        input_layer.predict.assert_called_once_with(self.X_train)
+        input_layer.predict_proba.assert_called_once_with(self.X_train)
 
-    def test_layer_predict_should_call_predict_on_augmented_dataset(self):
+    def test_layer_predict_proba_should_call_predict_on_augmented_dataset(self):
         # Given
         hidden_models = create_models(3, predicted_value=self.y_train)
         input_layer = MagicMock()
         predictions = np.stack([self.y_train for _ in range(3)], axis=-1)
-        input_layer.predict.return_value = predictions
+        input_layer.predict_proba.return_value = predictions
         hidden_layer = Layer(input_layer, *hidden_models)
 
         # When

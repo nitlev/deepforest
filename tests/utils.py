@@ -1,5 +1,6 @@
 import numpy as np
 from mock import MagicMock
+from sklearn.ensemble import RandomForestClassifier
 
 
 class TestWithData(object):
@@ -32,6 +33,7 @@ def create_models(n, predicted_value):
     models = []
     for i in range(n):
         new_model = MagicMock()
+        new_model.fit.return_value = new_model
         new_model.classes_ = [0, 1]
         new_model.predict.side_effect = predict
         new_model.predict_proba.side_effect = predict_proba

@@ -5,7 +5,7 @@ from sklearn.model_selection import KFold
 
 class Models(object):
     """
-    A class abstracting away a bunch of models. predict and predict_proba
+    A class abstracting away a bunch of models. predict_proba and predict_proba
     returns all the individual predictions stacked on a new dimension.
     """
 
@@ -30,7 +30,7 @@ class Models(object):
         :param X: A (n_samples,  n_features) array
         :return: A (n_samples, n_classes, n_models) dimensions array
         """
-        return np.concatenate(
+        return np.stack(
             [model.predict_proba(X) for model in self._models],
             axis=-1
         )
@@ -42,8 +42,16 @@ class Models(object):
         :param X: A (n_samples,  n_features) array
         :return: A (n_samples, n_models) dimensions array
         """
-        return np.stack([model.predict(X) for model in self._models],
+        return np.stack([model.predict_proba(X) for model in self._models],
                         axis=-1)
+
+    def __getitem__(self, item):
+        """
+        Models indexing method
+        :param item: int
+        :return: model, as passed to constructor
+        """
+        return self._models[item]
 
 
 class CrossValidatedModel(object):
@@ -51,7 +59,7 @@ class CrossValidatedModel(object):
     A class abstracting away the cross-validation step. The base model given
     as input is cloned n_splits times so that each clone will be trained on a
     subset of the input data while calling the fit method. The each prediction
-    is averaged when calling the predict and predict_proba methods.
+    is averaged when calling the predict_proba and predict_proba methods.
     """
     def __init__(self, model, n_splits=3):
         self.base_model = model

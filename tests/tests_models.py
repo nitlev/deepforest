@@ -37,7 +37,7 @@ class TestModels(TestWithData):
 
         # Check
         for model in models._models:
-            model.predict.assert_called_once_with(self.X_test)
+            model.predict_proba.assert_called_once_with(self.X_test)
 
     def test_Models_predict_should_return_properly_formatted_array(self):
         # Given
@@ -49,7 +49,7 @@ class TestModels(TestWithData):
         prediction = models.predict(self.X_test)
 
         # Check
-        assert prediction.shape == (len(self.y_test), nb_models)
+        assert prediction.shape == (len(self.y_test), 2, nb_models)
 
     def test_Models_predict_proba_method_should_call_predict_proba_on_all_models(
             self):
@@ -74,7 +74,19 @@ class TestModels(TestWithData):
         prediction = models.predict_proba(self.X_test)
 
         # Check
-        assert prediction.shape == (len(self.y_test), 2 * nb_models)
+        assert prediction.shape == (len(self.y_test), 2, nb_models)
+
+    def test_indexing_should_return_models(self):
+        # Given
+        nb_models = 3
+        models = Models(create_models(n=nb_models,
+                                      predicted_value=self.y_test))
+
+        # When
+        model = models[0]
+
+        # Check
+        assert isinstance(model, MagicMock)
 
 
 class TestCrossValidatedModel(TestWithData):

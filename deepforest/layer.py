@@ -21,15 +21,15 @@ class Layer(object):
         return self
 
     def _add_parent_predictions(self, X):
-        predictions = self.parent_layer.predict(X)
-        if len(predictions.shape) == 1:
-            new_X = np.concatenate([X, np.reshape(predictions, (-1, 1))],
-                                   axis=1)
-        else:
-            new_X = np.concatenate([X, predictions], axis=1)
+        predictions = self.parent_layer.predict_proba(X)
+
+        if len(predictions.shape) != 2:
+            predictions = np.reshape(predictions, (len(X), -1))
+
+        new_X = np.concatenate([X, predictions], axis=1)
         return new_X
 
-    def predict(self, X):
+    def predict_proba(self, X):
         full_X = self._add_parent_predictions(X)
         return self.models.predict_proba(full_X)
 
@@ -46,5 +46,5 @@ class InputLayer(object):
         self.models.fit(X, y)
         return self
 
-    def predict(self, X):
-        return self.models.predict(X)
+    def predict_proba(self, X):
+        return self.models.predict_proba(X)
