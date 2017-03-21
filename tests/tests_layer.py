@@ -5,14 +5,10 @@ import pytest
 from mock import MagicMock
 
 from deepforest.layer import Layer, InputLayer
-from .utils import load_data, create_models
+from .utils import create_models, TestWithData
 
 
-class TestLayer(object):
-    def setup(self):
-        self.X_train, self.y_train, \
-        self.X_test, self.y_test = load_data()
-
+class TestLayer(TestWithData):
     def test_layer_can_be_fitted_on_dataframe(self):
         # Given
         model = MagicMock()

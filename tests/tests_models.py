@@ -3,14 +3,10 @@ from __future__ import absolute_import
 from mock import MagicMock
 
 from deepforest.models import Models, CrossValidatedModel
-from .utils import create_models, load_data
+from .utils import create_models, TestWithData
 
 
-class TestModels(object):
-    def setup(self):
-        self.X_train, self.y_train, \
-        self.X_test, self.y_test = load_data()
-
+class TestModels(TestWithData):
     def test_Models_fit_method_should_fit_all_internal_models(self):
         # Given
         models = Models(create_models(n=3, predicted_value=self.y_test))
@@ -81,11 +77,7 @@ class TestModels(object):
         assert prediction.shape == (len(self.y_test), 2 * nb_models)
 
 
-class TestCrossValidatedModel(object):
-    def setup(self):
-        self.X_train, self.y_train, \
-        self.X_test, self.y_test = load_data()
-
+class TestCrossValidatedModel(TestWithData):
     def test_cvmodel_fit_should_fit_underlying_mode(self):
         # Given
         model_mock = MagicMock()
