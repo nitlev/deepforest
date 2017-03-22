@@ -39,7 +39,7 @@ setup(
     description='This is a simple implementation of the deep forest method',
     long_description=re.compile('^.. start-badges.*^.. end-badges',
                                 re.M | re.S).sub('', read('README.md')),
-    packages=find_packages(),
+    packages=["deepforest"],
     package_dir={"deepforest": "deepforest"},
     include_package_data=True,
     zip_safe=True,
