@@ -16,7 +16,7 @@ class GCForest(object):
         self.input_layer = None
         self.output_layer = None
 
-    def grow(self, Xtrain, ytrain, Xtest, ytest):
+    def fit(self, Xtrain, ytrain, Xtest, ytest):
         score = - np.inf
         new_layer = InputLayer(*next(self.model_generator))
         new_layer.fit(Xtrain, ytrain)

@@ -10,7 +10,7 @@ class TestgcForest(TestWithData):
         gcforest = GCForest(models_generator(self.y_train), roc_auc_score)
 
         # When
-        gcforest.grow(self.X_train, self.y_train, self.X_test, self.y_test)
+        gcforest.fit(self.X_train, self.y_train, self.X_test, self.y_test)
 
         # Check
         assert gcforest.levels > 0
@@ -20,7 +20,7 @@ class TestgcForest(TestWithData):
         gcforest = GCForest(models_generator(self.y_train), roc_auc_score)
 
         # When
-        gcforest.grow(self.X_train, self.y_train, self.X_test, self.y_test)
+        gcforest.fit(self.X_train, self.y_train, self.X_test, self.y_test)
 
         # Check
         gcforest.output_layer.models[0].fit.assert_called()
@@ -28,7 +28,7 @@ class TestgcForest(TestWithData):
     def test_predict_proba_should_return_properly_formatted_array(self):
         # Given
         gcforest = GCForest(models_generator(self.y_train), roc_auc_score)
-        gcforest.grow(self.X_train, self.y_train, self.X_test, self.y_test)
+        gcforest.fit(self.X_train, self.y_train, self.X_test, self.y_test)
 
         # When
         predictions = gcforest.predict_proba(self.X_test)
@@ -39,7 +39,7 @@ class TestgcForest(TestWithData):
     def test_predict_should_return_properly_formated_array(self):
         # Given
         gcforest = GCForest(models_generator(self.y_train), roc_auc_score)
-        gcforest.grow(self.X_train, self.y_train, self.X_test, self.y_test)
+        gcforest.fit(self.X_train, self.y_train, self.X_test, self.y_test)
 
         # When
         predictions = gcforest.predict(self.X_test)
