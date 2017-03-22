@@ -34,7 +34,7 @@ setup(
         'Programming Language :: Python 2.7 :: Python 3.3+',
     ],
     keywords='random forest :: deep learning',
-    version='0.1.0',
+    version='0.1.1',
     license='MIT',
     description='This is a simple implementation of the deep forest method',
     long_description=re.compile('^.. start-badges.*^.. end-badges',
