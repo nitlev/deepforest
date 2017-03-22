@@ -16,7 +16,7 @@ class GCForest(object):
         self.input_layer = None
         self.output_layer = None
 
-    def fit(self, Xtrain, ytrain, Xtest, ytest):
+    def grow(self, Xtrain, ytrain, Xtest, ytest):
         score = - np.inf
         new_layer = InputLayer(*next(self.model_generator))
         new_layer.fit(Xtrain, ytrain)
@@ -31,6 +31,9 @@ class GCForest(object):
             new_layer.fit(Xtrain, ytrain)
             predictions = np.mean(new_layer.predict_proba(Xtest), axis=-1)
             current_metric = self.metric(ytest, predictions[:, 1])
+
+    def fit(self, X, y):
+        self.output_layer.fit(X, y)
 
     def _new_layer(self):
         return Layer(self.output_layer,
