@@ -41,3 +41,8 @@ class Scanning(object):
         lines = (np.hstack(np.hstack(x)) for x in patches)
         array = np.vstack(x for x in lines)
         return array, len(patches)
+
+
+class MultiGrainedScanning(object):
+    def fit_transform(self, X, y):
+        pass

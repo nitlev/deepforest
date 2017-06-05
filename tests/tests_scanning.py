@@ -1,6 +1,6 @@
 import numpy as np
 
-from deepforest.scanning import Scanning
+from deepforest.scanning import Scanning, MultiGrainedScanning
 from .utils import TestWithData, create_models, prepare_x, prepare_y
 
 
@@ -39,12 +39,30 @@ class Test(TestWithData):
         # Check
         assert result.shape[1] == n_classes * n_patches * n_models
 
+    def test_fit_transform_should_return_properly_formatted_array_when_multiclass(self):
+        # Given
+        n_classes = 3
+        n_models = 2
+        n_patches = 3
+        y_train_multiclass = prepare_y((100, n_classes))
+        predicted_value = np.repeat(y_train_multiclass, n_patches, axis=0)
+        models = create_models(n=n_models,
+                               predicted_value=predicted_value, n_class=3)
+        scanning = Scanning(models, n_patches, patch_size=(2, 2))
+
+        # When
+        result = scanning.fit_transform(self.X_train, y_train_multiclass)
+
+        # Check
+        assert result.shape[1] == n_classes * n_patches * n_models
+
     def test_scan_should_return_properly_formatted_array(self):
         # Given
         n_models = 2
         n_patches = 3
         patch_size = 2
-        models = create_models(n=n_models, predicted_value=self.y_train)
+        models = create_models(n=n_models,
+                               predicted_value=self.y_train)
         scanning = Scanning(models, n_patches,
                             patch_size=(patch_size, patch_size))
 
@@ -57,7 +75,8 @@ class Test(TestWithData):
         assert result.shape == (len(self.X_train) * n_patches,
                                 patch_size * patch_size)
 
-    def test_scan_with_y_parameter_should_return_two_properly_sized_arrays(self):
+    def test_scan_with_y_parameter_should_return_two_properly_sized_arrays(
+            self):
         # Given
         n_models = 2
         n_patches = 3
@@ -111,3 +130,23 @@ class Test(TestWithData):
         # Check
         for model in models:
             model.predict_proba.assert_called_once()
+
+
+class TestMultiGrainedScanning(TestWithData):
+    def setup(self):
+        self.X_train = prepare_x((100, 3, 3))
+        self.y_train = prepare_y((100,))
+
+    def test_fit_transform_should_return_properly_formatted_array(self):
+        # Given
+        n_models = 2
+        n_patches = 3
+        patch_size = 2
+        models = create_models(n=n_models, predicted_value=self.y_train)
+        mgs = MultiGrainedScanning()
+
+        # When
+        mgs.fit_transform(self.X_train, self.y_train)
+
+        # Check
+        pass

@@ -26,20 +26,23 @@ def models_generator(predicted_value):
         yield create_models(3, predicted_value)
 
 
-def create_models(n, predicted_value):
+def create_models(n, predicted_value, n_class=2):
     def predict(X):
         return predicted_value[:len(X)]
 
     def predict_proba(X):
-        return np.stack([predict(X),
-                         1 - predict(X)],
-                        axis=1)
+        if n_class == 2:
+            return np.stack([predict(X),
+                             1 - predict(X)],
+                            axis=1)
+        elif n_class > 2:
+            return predicted_value
 
     models = []
     for i in range(n):
         new_model = MagicMock()
         new_model.fit.return_value = new_model
-        new_model.classes_ = [0, 1]
+        new_model.classes_ = list(range(n_class))
         new_model.predict.side_effect = predict
         new_model.predict_proba.side_effect = predict_proba
         models.append(new_model)
