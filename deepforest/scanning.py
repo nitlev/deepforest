@@ -10,6 +10,15 @@ class Scanning(object):
         self.n_patch = n_patch
         self.patch_size = patch_size
 
+    def fit(self, X, y):
+        transformed_X, transformed_y = self._scan(X, y)
+        self.models.fit(transformed_X, transformed_y)
+
+    def transform(self, X, y):
+        transformed_X, transformed_y = self._scan(X, y)
+        models_predictions = self.models.predict_proba(transformed_X)
+        return models_predictions.reshape(len(X), -1)
+
     def fit_transform(self, X, y):
         transformed_X, transformed_y = self._scan(X, y)
         self.models.fit(transformed_X, transformed_y)

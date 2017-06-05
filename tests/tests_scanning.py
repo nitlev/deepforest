@@ -79,3 +79,35 @@ class Test(TestWithData):
         assert isinstance(result_y, np.ndarray)
         assert len(result_y.shape) == len(self.y_train.shape)
         assert result_y.shape[0] == len(self.X_train) * n_patches
+
+    def test_fit_should_call_underlying_fit_method(self):
+        # Given
+        n_models = 2
+        n_patches = 3
+        patch_size = 2
+        models = create_models(n=n_models, predicted_value=self.y_train)
+        scanning = Scanning(models, n_patches,
+                            patch_size=(patch_size, patch_size))
+
+        # When
+        scanning.fit(self.X_train, self.y_train)
+
+        # Check
+        for model in models:
+            model.fit.assert_called_once()
+
+    def test_transform_should_call_underlying_predict_proba_method(self):
+        # Given
+        n_models = 2
+        n_patches = 3
+        patch_size = 2
+        models = create_models(n=n_models, predicted_value=self.y_train)
+        scanning = Scanning(models, n_patches,
+                            patch_size=(patch_size, patch_size))
+
+        # When
+        scanning.transform(self.X_train, self.y_train)
+
+        # Check
+        for model in models:
+            model.predict_proba.assert_called_once()
