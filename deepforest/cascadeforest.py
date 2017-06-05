@@ -3,7 +3,7 @@ import numpy as np
 from deepforest.layer import Layer, InputLayer
 
 
-class GCForest(object):
+class CascadeForest(object):
     """
     A simple implementation of the gcForest algorithme developed by Zhi-Hua
     Zhou and Ji Feng
@@ -25,7 +25,6 @@ class GCForest(object):
 
         while current_metric > score:
             score = current_metric
-            "Adding layer : current score = {}".format(score)
             self._add_layer(new_layer)
             new_layer = self._new_layer()
             new_layer.fit(Xtrain, ytrain)

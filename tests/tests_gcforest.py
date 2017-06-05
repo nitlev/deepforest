@@ -1,14 +1,14 @@
 from mock import MagicMock
 from sklearn.metrics import roc_auc_score
 
-from deepforest.gcForest import GCForest
+from deepforest.cascadeforest import CascadeForest
 from tests.utils import TestWithData, models_generator
 
 
 class TestgcForest(TestWithData):
     def test_gcforest_grow_should_add_level_to_gcforest(self):
         # Given
-        gcforest = GCForest(models_generator(self.y_train), roc_auc_score)
+        gcforest = CascadeForest(models_generator(self.y_train), roc_auc_score)
 
         # When
         gcforest.grow(self.X_train, self.y_train, self.X_test, self.y_test)
@@ -18,7 +18,7 @@ class TestgcForest(TestWithData):
 
     def test_gcforest_last_layer_should_be_trained_after_grow(self):
         # Given
-        gcforest = GCForest(models_generator(self.y_train), roc_auc_score)
+        gcforest = CascadeForest(models_generator(self.y_train), roc_auc_score)
 
         # When
         gcforest.grow(self.X_train, self.y_train, self.X_test, self.y_test)
@@ -28,7 +28,7 @@ class TestgcForest(TestWithData):
 
     def test_predict_proba_should_return_properly_formatted_array(self):
         # Given
-        gcforest = GCForest(models_generator(self.y_train), roc_auc_score)
+        gcforest = CascadeForest(models_generator(self.y_train), roc_auc_score)
         gcforest.grow(self.X_train, self.y_train, self.X_test, self.y_test)
 
         # When
@@ -39,7 +39,7 @@ class TestgcForest(TestWithData):
 
     def test_predict_should_return_properly_formated_array(self):
         # Given
-        gcforest = GCForest(models_generator(self.y_train), roc_auc_score)
+        gcforest = CascadeForest(models_generator(self.y_train), roc_auc_score)
         gcforest.grow(self.X_train, self.y_train, self.X_test, self.y_test)
 
         # When
@@ -50,7 +50,7 @@ class TestgcForest(TestWithData):
 
     def test_fit_should_call_output_layer_fit(self):
         # Given
-        gcforest = GCForest(models_generator(self.y_train), roc_auc_score)
+        gcforest = CascadeForest(models_generator(self.y_train), roc_auc_score)
         gcforest.grow(self.X_train, self.y_train, self.X_test, self.y_test)
         gcforest.output_layer = MagicMock()
 
