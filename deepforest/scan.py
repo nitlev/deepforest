@@ -1,10 +1,12 @@
+from copy import deepcopy
+
 import numpy as np
 from sklearn.feature_extraction.image import extract_patches_2d
 
 from deepforest.models import Models
 
 
-class Scanning(object):
+class Scan(object):
     def __init__(self, models, n_patch, patch_size=(2, 2)):
         self.models = Models(models)
         self.n_patch = n_patch
@@ -14,8 +16,8 @@ class Scanning(object):
         transformed_X, transformed_y = self._scan(X, y)
         self.models.fit(transformed_X, transformed_y)
 
-    def transform(self, X, y):
-        transformed_X, transformed_y = self._scan(X, y)
+    def transform(self, X):
+        transformed_X = self._scan(X)
         models_predictions = self.models.predict_proba(transformed_X)
         return models_predictions.reshape(len(X), -1)
 
@@ -43,6 +45,21 @@ class Scanning(object):
         return array, len(patches)
 
 
-class MultiGrainedScanning(object):
+class MultiGrainedScan(object):
+    def __init__(self, models, n_patch, patch_sizes):
+        self.scans = [Scan(deepcopy(models), n_patch, patch_size)
+                      for patch_size in patch_sizes]
+
+    def fit(self, X, y):
+        for scan in self.scans:
+            scan.fit(X, y)
+
+    def transform(self, X):
+        transformed_Xs = [scan.transform(X) for scan in self.scans]
+        final_result = np.hstack(transformed_Xs)
+        return final_result
+
     def fit_transform(self, X, y):
-        pass
+        transformed_Xs = [scan.fit_transform(X, y) for scan in self.scans]
+        final_result = np.hstack(transformed_Xs)
+        return final_result
