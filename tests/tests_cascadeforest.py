@@ -60,3 +60,35 @@ class TestgcForest(TestWithData):
         # Check
         gcforest.output_layer.fit.assert_called_once_with(self.X_test,
                                                           self.y_test)
+
+    def test_has_improved_should_return_true_iif_score_went_up_when_maximizing(self):
+        # Given
+        gcforest = CascadeForest(models_generator(self.y_train),
+                                 roc_auc_score,
+                                 objective='maximize')
+
+        # When
+        has_improved_true = gcforest._has_improved(2, 1)
+        has_improved_false = gcforest._has_improved(1, 2)
+        has_improved_false2 = gcforest._has_improved(1, 1)
+
+        # Check
+        assert has_improved_true
+        assert not has_improved_false
+        assert not has_improved_false2
+
+    def test_has_improved_should_return_true_iif_score_went_up_when_minimizing(self):
+        # Given
+        gcforest = CascadeForest(models_generator(self.y_train),
+                                 roc_auc_score,
+                                 objective='minimize')
+
+        # When
+        has_improved_true = gcforest._has_improved(1, 2)
+        has_improved_false = gcforest._has_improved(2, 1)
+        has_improved_false2 = gcforest._has_improved(1, 1)
+
+        # Check
+        assert has_improved_true
+        assert not has_improved_false
+        assert not has_improved_false2
